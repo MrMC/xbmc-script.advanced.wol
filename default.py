@@ -1,6 +1,6 @@
 # Wake-On-LAN
 
-import socket, ping, os, sys, time
+import socket, os, sys, time
 import xbmc, xbmcgui, xbmcaddon
 
 def main(isAutostart=False):
@@ -81,21 +81,22 @@ def main(isAutostart=False):
 				xbmc.executebuiltin('XBMC.Notification("'+language(60001).replace("%hostOrIp%",hostOrIp)+'","'+language(60002).replace("%timecount%",str(timecount)).replace("%timeout%",str(hostupWaitTime))+'",5000,"'+iconConnect+'")')
 			timecount = timecount+1
 		if (enableHostupNotifies == "true"):
-			xbmc.executebuiltin('XBMC.Notification("'+language(60011).replace("%hostOrIp%",hostOrIp)+'","",5000,"'+iconSuccess+'")')
+			xbmc.executebuiltin('XBMC.Notification("'+language(60009).replace("%hostOrIp%",hostOrIp)+'","",5000,"'+iconSuccess+'")')
 		hostupConfirmed = True
 	else:
 		#otherwise we determine the success by pinging (default behaviour)
 		try:
 			timecount = 1
+			canPing = False
 			while timecount <= pingTimeout:
-				delay = ping.do_one(hostOrIp, 1)
-				if delay == None:
+				canPing = xbmc.pingHostOrIP(hostOrIp, 1)
+				if canPing == True:
 					if (enablePingCounterNotifies == "true"):
 						xbmc.executebuiltin('XBMC.Notification("'+language(60001).replace("%hostOrIp%",hostOrIp)+'","'+language(60002).replace("%timecount%",str(timecount)).replace("%timeout%",str(pingTimeout))+'",5000,"'+iconConnect+'")')
 					timecount = timecount+1
 				else:
 					break
-			if delay == None:
+			if canPing == True:
 				xbmc.sleep(1000)
 				if (enableHostupNotifies == "true"):
 					xbmc.executebuiltin('XBMC.Notification("'+language(60003).replace("%hostOrIp%",hostOrIp)+'","",5000,"'+iconError+'")')
@@ -111,12 +112,6 @@ def main(isAutostart=False):
 			if (enablePingCounterNotifies == "true"):
 				if errno == 11004:
 					xbmc.executebuiltin('XBMC.Notification("'+language(60005)+'","'+language(60006).replace("%hostOrIp%",hostOrIp)+'",10000,"'+iconError+'")')
-				elif errno == 10013:
-					if sys.platform == 'win32':
-						xbmc.executebuiltin('XBMC.Notification("'+language(60005)+'","'+language(60009)+'",20000,"'+iconError+'")')			
-				elif errno == 1:
-					if sys.platform == 'linux2':
-						xbmc.executebuiltin('XBMC.Notification("'+language(60005)+'","'+language(60010)+'",20000,"'+iconError+'")')		
 				else:
 					xbmc.executebuiltin('XBMC.Notification("'+language(60005)+'","'+msg.decode("utf-8","ignore")+'",20000,"'+iconError+'")')
 	

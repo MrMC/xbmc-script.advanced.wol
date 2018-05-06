@@ -1,3 +1,7 @@
+[B]1.2.6[/B]
+- Replace ping.py with using xbmc.pingHostOrIP
+- Rebrand to MrMC
+
 [B]1.2.5[/B]
 - Changed import of xbmc.python to v2.1.0 in addon.xml (needed for Gotham compatibility)
 
